@@ -32,62 +32,83 @@
         <div id="gifs-appear-here">
         </div>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-            <script type="text/javascript">
-             
-              $("button").on("click", function() {
-               
-                var comedy = $(this).attr("data-comedy");
 
-                var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
-                    comedy + "&api_key=Pn9cLUzYaxN3wjyUGKJXFCTX7Im9hAxJ&limit=10"
+<script type="text/javascript">
+             
+    $("button").on("click", function() 
+    {
+     
+      var comedy = $(this).attr("data-comedy");
+
+      //console.log("comedy topic: " + comedy);
+
+      var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+          comedy + "&api_key=Pn9cLUzYaxN3wjyUGKJXFCTX7Im9hAxJ&limit=10";
+
+      //console.log("url: " + queryURL);
+
+
+
 
                 
-
+                // placing gifs on page
         $.ajax({
-            url: queryURL,
-            method: "GET"
-      })
+        url: queryURL,
+        method: "GET"
+      }).then(function(response) 
+      {
+        console.log(queryURL);
 
-.then(function(response) {
-          console.log(queryURL);
+        console.log(response);
+        var results = response.data;
 
-          console.log(response);
-          var results = response.data;
+        $("#gifs-appear-here").empty();
 
-          $("#gifs-appear-here").empty();
-         
+          
 
-         for (var i = 0; i < results.length; i++) {
-
+         for (var i = 0; i < results.length; i++) 
+         {
             var comedyDiv = $("<div>");
-
             var p = $("<p>").text("Rating: " + results[i].rating);
-
             var comedyImage = $("<img>");
-        
             comedyImage.attr("src", results[i].images.fixed_height.url);
-
+            comedyImage.attr("data-still", results[i].images.fixed_height_still.url); 
+          comedyImage.attr("data-animate", results[i].images.fixed_height.url);
+          comedyImage.attr("data-state", 'animate');
+          comedyImage.attr("class", 'gif');
             comedyDiv.append(p);
             comedyDiv.append(comedyImage);
-
             $("#gifs-appear-here").prepend(comedyDiv);
           }
 
-          
-        });
+          $(".gif").on("click", function() 
+          {
+            // The attr jQuery method allows us to get or set the value of any attribute on our HTML element
+            var state = $(this).attr("data-state"); //animate
+
+            // If the clicked image's state is still, update its src attribute to what its data-animate value is.
+            // Then, set the image's data-state to animate
+            // Else set src to the data-still value
+            if (state === "still") 
+            {
+              $(this).attr("src", $(this).attr("data-animate"));
+              $(this).attr("data-state", "animate");
+            } else 
+            {
+              $(this).attr("src", $(this).attr("data-still"));
+              $(this).attr("data-state", "still");
+            }
+          });
+
+
+      });
+
+
     });
 
-// <div id="gif"></div>
 
-//     $(".gif").on("click", function() {
-//       var state = $(this).attr("data-state");
-//       if (state === "still") {
-//         $(this).attr("src", $(this).attr("data-animate"));
-//         $(this).attr("data-state", "animate");
-//       } else {
-//         $(this).attr("src", $(this).attr("data-still"));
-//         $(this).attr("data-state", "still"); 
 
+   
   </script>
 </body>
 
